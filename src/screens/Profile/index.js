@@ -8,23 +8,37 @@ import {
   Pressable,
 } from "react-native";
 import { Ionicons, Fontisto } from "@expo/vector-icons";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Auth } from "aws-amplify";
 import { Role } from "../../models";
 
 const Profile = () => {
-  const [name, setName] = useState("");
-  const [direccion, setDireccion] = useState("");
-  const [whats, setWhats] = useState("");
-  const [email, setEmail] = useState("");
-  const [roleUsuario, setRoleUsuario] = useState(Role.PACIENTE);
-  const onSave = () => {
-    console.warn("guardar");
+  const [user, setUser] = useState("");
+  useEffect(() => {
+    Auth.currentAuthenticatedUser().then(setUser);
+  }, []);
+
+  // const [name, setName] = useState("");
+  // const [direccion, setDireccion] = useState("");
+  // const [whats, setWhats] = useState("");
+  // const [email, setEmail] = useState("");
+
+  // const onSave = () => {
+  //   console.warn("guardar");
+  // };
+
+  const signOut = () => {
+    Auth.signOut();
   };
+
   return (
     <View>
-      <Text style={styles.title}>Perfil</Text>
-      <TextInput
+      <Text style={styles.title}>Hola {user.username}</Text>
+
+      <Text style={styles.input}>
+        Próximamente tendremos más información para ti
+      </Text>
+      {/* <TextInput
         value={name}
         onChangeText={setName}
         placeholder="Nombre Completo"
@@ -47,55 +61,24 @@ const Profile = () => {
         onChangeText={setEmail}
         placeholder="Email"
         style={styles.input}
-      />
-      <Text style={styles.subtitle}>Escoge tu Rol de Usuario</Text>
-      <View style={{ flexDirection: "row", justifyContent: "center" }}>
-        <Pressable
-          onPress={() => setRoleUsuario(Role.DOCTOR)}
-          style={{
-            backgroundColor: roleUsuario === Role.DOCTOR ? "#3FC060" : "white",
-            margin: 10,
-            padding: 10,
-            borderWidth: 1,
-            borderColor: "gray",
-            borderRadius: 10,
-          }}
-        >
-          <Fontisto name="doctor" size={24} color="black">
-            <Text> Doctor</Text>
-          </Fontisto>
-        </Pressable>
-        <Pressable
-          onPress={() => setRoleUsuario(Role.PACIENTE)}
-          style={{
-            backgroundColor:
-              roleUsuario === Role.PACIENTE ? "#3FC060" : "white",
-            margin: 10,
-            padding: 10,
-            borderWidth: 1,
-            borderColor: "gray",
-            borderRadius: 10,
-          }}
-        >
-          <Ionicons name="person-outline" size={24} color="black">
-            <Text> Paciente</Text>
-          </Ionicons>
-        </Pressable>
-      </View>
-      <View style={{ backgroundColor: "blue", margin: 10, borderRadius: 10 }}>
+      /> */}
+
+      {/* <View style={{ backgroundColor: "blue", margin: 10, borderRadius: 10 }}>
         <Button onPress={onSave} title="Guardar" color="white" />
-      </View>
+      </View> */}
 
       <Text
-        onPress={() => Auth.signOut()}
+        onPress={signOut}
         style={{
+          width: "100%",
           textAlign: "center",
           color: "red",
-          margin: 10,
-          marginBottom: "auto",
+          marginTop: "auto",
+          marginVertical: 20,
+          fontSize: 20,
         }}
       >
-        Cerrar sesión
+        Cerrar Sesión
       </Text>
     </View>
   );
@@ -110,7 +93,7 @@ const styles = StyleSheet.create({
   },
   input: {
     margin: 10,
-    backgroundColor: "white",
+    textAlign: "center",
     padding: 15,
     borderRadius: 5,
   },

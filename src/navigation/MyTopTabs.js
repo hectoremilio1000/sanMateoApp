@@ -1,4 +1,5 @@
-import { View, Text } from "react-native";
+import { useState, useEffect } from "react";
+import { View, Text, ActivityIndicator } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 
@@ -6,46 +7,86 @@ import Profile from "../screens/Profile";
 import VerEstudios from "../screens/VerEstudios";
 import EstudioPdf from "../components/Resultado";
 
-import Amplify, { Auth } from "aws-amplify";
-import { I18n } from "aws-amplify";
+import Amplify, { Auth, Hub } from "aws-amplify";
+
 import awsconfig from "../aws-exports";
-import { withAuthenticator } from "aws-amplify-react-native";
+import SignInScreen from "../screens/SignInScreen/index";
+import NewPasswordScreen from "../screens/NewPasswordScreen/index";
+import ForgotPasswordScreen from "../screens/ForgotPassword/index";
+import ConfirmEmailScreen from "../screens/ConfirmEmailScreen/index";
+import SignUpScreen from "../screens/SignUpScreen/index";
+Amplify.configure(awsconfig);
 
-I18n.setLanguage("es");
-I18n.putVocabularies({
-  es: {
-    "Enter your username": "Ingresa tu email",
-    "Enter your password": "Ingresa tu contraseña",
-    "Please Sign In": "Por favor Inicia Sesión",
-    "Iniciar sesíon": "Iniciar sesión",
-    "Sign In": "Iniciar Sesión",
-    "Sign Up": "Regístrate",
-    "Create Account": "Regístrate",
-    "Your code is on the way. To log in, enter the code we emailed to":
-      "Se envió el código de confirmación al email proporcionado.",
-    "It may take a minute to arrive.": "Puede tardar unos minutos en llegar.",
-    "Invalid verification code provided, please try again.":
-      "Código de verificación inválido, por favor intenta de nuevo.",
-    "Send code": "Enviar código",
-    "Cannot reset password for the user as there is no registered/verified email or phone_number":
-      "No se puede reestablecer la contraseña para el usuario ya que no se encuentra registrado/ el email no está verificado o tampoco el número de teléfono.",
-  },
-});
+const LogIn = createNativeStackNavigator();
 
-Amplify.configure({
-  ...awsconfig,
-  Analytics: {
-    disabled: true,
-  },
-});
+const LogInNavigator = () => {
+  return (
+    <LogIn.Navigator screenOptions={{ headerShown: false }}>
+      <LogIn.Screen name="SignIn" component={SignInScreen} />
+      <LogIn.Screen name="NewPassword" component={NewPasswordScreen} />
+      <LogIn.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+      <LogIn.Screen name="ConfirmEmail" component={ConfirmEmailScreen} />
+      <LogIn.Screen name="SignUp" component={SignUpScreen} />
+    </LogIn.Navigator>
+  );
+};
 
 const TabTop = createMaterialTopTabNavigator();
 
 function MyTopTabs() {
+  const [authUser, setAuthUser] = useState(undefined);
+
+  const checkUser = async () => {
+    try {
+      const authUser = await Auth.currentAuthenticatedUser({
+        bypassCache: true,
+      });
+      setAuthUser(authUser);
+    } catch (error) {
+      setAuthUser(null);
+    }
+  };
+
+  useEffect(() => {
+    checkUser();
+  }, []);
+
+  useEffect(() => {
+    const listener = data => {
+      if (data.payload.event === "signIn" || data.payload.event === "signOut") {
+        checkUser();
+      }
+    };
+    Hub.listen("auth", listener);
+    return () => Hub.remove("auth", listener);
+  }, []);
+
+  if (authUser === undefined) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator />
+      </View>
+    );
+  }
+
   return (
-    <TabTop.Navigator>
-      <TabTop.Screen name="VerEstudios" component={VerEstudiosNavigator} />
-      <TabTop.Screen name="Perfil" component={Profile} />
+    <TabTop.Navigator screenOptions={{ headerShown: false }}>
+      {authUser ? (
+        <>
+          <TabTop.Screen
+            name="VerEstudios"
+            component={VerEstudiosNavigator}
+            options={{ headerShown: false }}
+          />
+          <TabTop.Screen name="Perfil" component={Profile} />
+        </>
+      ) : (
+        <TabTop.Screen
+          name="Sesion"
+          component={LogInNavigator}
+          options={{ headerShown: false }}
+        />
+      )}
     </TabTop.Navigator>
   );
 }
@@ -69,4 +110,4 @@ const VerEstudiosNavigator = () => {
   );
 };
 
-export default withAuthenticator(MyTopTabs);
+export default MyTopTabs;

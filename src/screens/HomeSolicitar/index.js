@@ -5,6 +5,7 @@ import {
   Button,
   StyleSheet,
   FlatList,
+  SafeAreaView,
 } from "react-native";
 import React from "react";
 import Estudios from "../../components/Estudios.js";
@@ -16,7 +17,7 @@ const HomeSolicitar = () => {
     Linking.openURL("https://wa.me/+5219511028474");
   };
   return (
-    <View
+    <SafeAreaView
       style={{ padding: 10, flex: 1, backgroundColor: "white", paddingTop: 20 }}
     >
       <Text
@@ -24,10 +25,11 @@ const HomeSolicitar = () => {
           textAlign: "center",
           fontWeight: "700",
           fontSize: 16,
-          marginBottom: 5,
+          paddingTop: 10,
+          marginVertical: 10,
         }}
       >
-        Para solicitarlo sólo da click en la prueba
+        Solicita un test a domicilio con un Click
       </Text>
 
       <FlatList
@@ -38,7 +40,7 @@ const HomeSolicitar = () => {
       <Pressable onPress={onPress} style={styles.button}>
         <Text style={styles.buttonText}>Otros estudios</Text>
       </Pressable>
-    </View>
+    </SafeAreaView>
   );
 };
 

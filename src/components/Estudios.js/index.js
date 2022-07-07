@@ -1,6 +1,6 @@
 import { View, Text, Image, StyleSheet, Pressable } from "react-native";
 import React from "react";
-import servicios from "../../../assets/data/servicios";
+
 import * as Linking from "expo-linking";
 
 const Estudios = ({ servicio }) => {
@@ -42,9 +42,10 @@ const styles = StyleSheet.create({
   },
   image: {
     width: "100%",
-    aspectRatio: 4 / 3,
+    aspectRatio: 4 / 2,
     marginBottom: 5,
     borderRadius: 10,
+    resizeMode: "cover",
   },
   containerTitulo: {
     width: "70%",
