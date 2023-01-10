@@ -7,15 +7,13 @@ import Profile from "../screens/Profile";
 import VerEstudios from "../screens/VerEstudios";
 import EstudioPdf from "../components/Resultado";
 
-import Amplify, { Auth, Hub } from "aws-amplify";
+import { Auth, Hub } from "aws-amplify";
 
-import awsconfig from "../aws-exports";
 import SignInScreen from "../screens/SignInScreen/index";
 import NewPasswordScreen from "../screens/NewPasswordScreen/index";
 import ForgotPasswordScreen from "../screens/ForgotPassword/index";
 import ConfirmEmailScreen from "../screens/ConfirmEmailScreen/index";
 import SignUpScreen from "../screens/SignUpScreen/index";
-Amplify.configure(awsconfig);
 
 const LogIn = createNativeStackNavigator();
 

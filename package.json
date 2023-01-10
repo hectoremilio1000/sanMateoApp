@@ -1,6 +1,7 @@
 {
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
+    "eas-build-pre-install": "echo $AWS_EXPORTS | base64 --decode > ./src/aws-exports.js",
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
@@ -24,7 +25,7 @@
     "expo-device": "~4.2.0",
     "expo-linking": "~3.1.0",
     "expo-status-bar": "~1.3.0",
-    "expo-updates": "~0.13.2",
+    "expo-updates": "~0.13.3",
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-hook-form": "^7.33.1",
